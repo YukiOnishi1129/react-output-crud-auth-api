@@ -1,12 +1,30 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const BASE_API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-const globalAxios = axios.create({
+const token = localStorage.getItem("authentication");
+
+const apiClient = axios.create({
   baseURL: BASE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-export default globalAxios;
+apiClient.interceptors.request.use(
+  (config) => {
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+export default apiClient;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isAxiosError = (error: any): error is AxiosError =>
+  !!error.isAxiosError;
