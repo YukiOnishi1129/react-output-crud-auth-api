@@ -21,6 +21,7 @@ services:
       - BACKEND_PORT=${BACKEND_PORT}
       - BACKEND_CONTAINER_POST=${BACKEND_CONTAINER_POST}
       - FRONTEND_URL=${FRONTEND_URL}
+      - JWT_SECRET=${JWT_SECRET}
       - "TZ=Asia/Tokyo" # タイムゾーンを日本時刻に設定
 
   db:
