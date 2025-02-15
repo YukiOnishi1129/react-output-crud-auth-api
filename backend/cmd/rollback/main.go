@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/domain"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/pkg/database"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/domain"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/database"
 	"github.com/joho/godotenv"
 )
 
@@ -24,6 +24,12 @@ func main() {
 	}
 
 	err = db.Migrator().DropTable(&domain.Todo{})
+	if err != nil {
+		log.Fatalf("Error dropping tables: %v", err)
+		return
+	}
+
+	err = db.Migrator().DropTable(&domain.User{})
 	if err != nil {
 		log.Fatalf("Error dropping tables: %v", err)
 		return
