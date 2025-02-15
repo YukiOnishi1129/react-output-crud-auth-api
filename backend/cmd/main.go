@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/rs/cors"
+
 	persistence_gorm "github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/infrastructure/persistence/gorm"
 	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/interfaces/handler"
 	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/database"
@@ -41,9 +43,11 @@ func main() {
 	authHandler.RegisterAuthHandlers(r)
 	todoHandler.RegisterTodoHandlers(r)
 
+	c := cors.Default().Handler(r)
+
 
 	log.Printf("Server started at http://localhost:%s", os.Getenv("BACKEND_CONTAINER_POST"))
-	if err := http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("BACKEND_CONTAINER_POST")), r); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", os.Getenv("BACKEND_CONTAINER_POST")), c); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
 	
