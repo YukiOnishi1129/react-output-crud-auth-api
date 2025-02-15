@@ -25,9 +25,10 @@ func main() {
 	userRepository := persistence_gorm.NewUserRepository(db)
 	todoRepository := persistence_gorm.NewTodoRepository(db)
 	authUsecase := usecase.NewAuthUseCase(userRepository)
+	userUsecase := usecase.NewUserUseCase(userRepository)
 	todoUsecase := usecase.NewTodoUseCase(todoRepository)
 	authHandler := handler.NewAuthHandler(authUsecase)
-	todoHandler := handler.NewTodoHandler(todoUsecase)
+	todoHandler := handler.NewTodoHandler(todoUsecase, userUsecase)
 
 	corsOptions := handlers.CORS(
 		handlers.AllowedOrigins([]string{os.Getenv("FRONTEND_URL")}), 

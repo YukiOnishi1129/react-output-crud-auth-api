@@ -6,6 +6,17 @@ import (
 	"github.com/google/uuid"
 )
 
+type ListTodoInput struct {
+	UserID uuid.UUID `json:"user_id" validate:"required"`
+}
+
+func (i *ListTodoInput) Validate() error {
+	if i.UserID == uuid.Nil {
+		return errors.New("user_id is required")
+	}
+	return nil
+}
+
 type GetTodoInput struct {
 	ID     uuid.UUID `json:"id" validate:"required"`
 }

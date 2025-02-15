@@ -11,7 +11,7 @@ import (
 )
 
 type TodoUseCase interface {
-	ListTodo(ctx context.Context) (*output.TodoListOutput, error)
+	ListTodo(ctx context.Context, input *input.ListTodoInput) (*output.TodoListOutput, error)
 	GetTodo(ctx context.Context, input *input.GetTodoInput) (*output.TodoOutput, error)
 	CreateTodo(ctx context.Context, input *input.CreateTodoInput) (*output.TodoOutput, error)
 	UpdateTodo(ctx context.Context, input *input.UpdateTodoInput) (*output.TodoOutput, error)
@@ -26,8 +26,10 @@ func NewTodoUseCase(todoRepo repository.TodoRepository) TodoUseCase {
 	return &todoUseCase{todoRepo: todoRepo}
 }
 
-func (u *todoUseCase)ListTodo(ctx context.Context) (*output.TodoListOutput, error) {
-	todos, err := u.todoRepo.FindAll(ctx)
+func (u *todoUseCase)ListTodo(ctx context.Context,input *input.ListTodoInput) (*output.TodoListOutput, error) {
+	todos, err := u.todoRepo.FindAll(ctx, &dto.FindAllInput{
+		UserID: input.UserID.String(),
+	})
 	if err != nil {
 		return nil, err
 	}

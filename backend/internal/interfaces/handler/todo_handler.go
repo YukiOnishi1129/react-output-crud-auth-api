@@ -22,15 +22,14 @@ type TodoHandler interface {
 	UpdateTodo(w http.ResponseWriter, r *http.Request)
 	DeleteTodo(w http.ResponseWriter, r *http.Request)
 }
-
-
 type todoHandler struct {
 	BaseHandler
 	todoUseCase usecase.TodoUseCase
+	userUseCase usecase.UserUseCase
 }
 
-func NewTodoHandler(todoUseCase usecase.TodoUseCase) TodoHandler {
-	return &todoHandler{todoUseCase: todoUseCase}
+func NewTodoHandler(todoUseCase usecase.TodoUseCase, userUseCase usecase.UserUseCase) TodoHandler {
+	return &todoHandler{todoUseCase: todoUseCase, userUseCase: userUseCase}
 }
 
 
@@ -49,8 +48,14 @@ func (h *todoHandler) RegisterTodoHandlers(r *mux.Router) {
 
 func (h *todoHandler) ListTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	email := middleware.GetUserEmail(r)
+	user, err := h.userUseCase.GetUserByEmail(ctx, &input.GetUserByEmailInput{Email: email})
+	if err != nil {
+		h.respondError(w, err)
+		return
+	}
 
-	output, err := h.todoUseCase.ListTodo(ctx)
+	output, err := h.todoUseCase.ListTodo(ctx, &input.ListTodoInput{UserID: user.ID})
 	if err != nil {
 		h.respondError(w, err)
 		return

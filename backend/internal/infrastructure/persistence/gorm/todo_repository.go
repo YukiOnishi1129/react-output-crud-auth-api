@@ -18,9 +18,9 @@ func NewTodoRepository(db *gorm.DB) repository.TodoRepository {
 	return &todoRepository{db: db}
 }
 
-func (r *todoRepository) FindAll(ctx context.Context) (*dto.TodoListOutput, error) {
+func (r *todoRepository) FindAll(ctx context.Context, input *dto.FindAllInput) (*dto.TodoListOutput, error) {
 	var todos []*domain.Todo
-	if err := r.db.Find(&todos).Error; err != nil {
+	if err := r.db.Where("user_id = ?", input.UserID).Find(&todos).Error; err != nil {
 		return &dto.TodoListOutput{}, err
 	}
 	return dto.ConvertTodoListOutput(todos, int64(len(todos))), nil
