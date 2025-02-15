@@ -7,14 +7,15 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/interfaces/middleware"
 	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/constants"
 	apperrors "github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/errors"
 	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/usecase"
 	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/usecase/input"
 )
 
-type TodoHandlerInterface interface {
-	RegisterHandlers(r *mux.Router)
+type TodoHandler interface {
+	RegisterTodoHandlers(r *mux.Router)
 	ListTodo(w http.ResponseWriter, r *http.Request)
 	GetTodo(w http.ResponseWriter, r *http.Request)
 	CreateTodo(w http.ResponseWriter, r *http.Request)
@@ -23,18 +24,19 @@ type TodoHandlerInterface interface {
 }
 
 
-type TodoHandler struct {
+type todoHandler struct {
 	BaseHandler
 	todoUseCase usecase.TodoUseCase
 }
 
-func NewTodoHandler(todoUseCase usecase.TodoUseCase) TodoHandlerInterface {
-	return &TodoHandler{todoUseCase: todoUseCase}
+func NewTodoHandler(todoUseCase usecase.TodoUseCase) TodoHandler {
+	return &todoHandler{todoUseCase: todoUseCase}
 }
 
 
-func (h *TodoHandler) RegisterHandlers(r *mux.Router) {
+func (h *todoHandler) RegisterTodoHandlers(r *mux.Router) {
 	todoRouter := r.PathPrefix(constants.TodosPath).Subrouter()
+	todoRouter.Use(middleware.AuthMiddleware)
 
 	todoRouter.HandleFunc("", h.ListTodo).Methods("GET")
 	todoRouter.HandleFunc("/{id}", h.GetTodo).Methods("GET")
@@ -45,7 +47,7 @@ func (h *TodoHandler) RegisterHandlers(r *mux.Router) {
 	todoRouter.HandleFunc("/{id}", optionsDeleteHandler).Methods("OPTIONS")
 }
 
-func (h *TodoHandler) ListTodo(w http.ResponseWriter, r *http.Request) {
+func (h *todoHandler) ListTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	output, err := h.todoUseCase.ListTodo(ctx)
@@ -57,7 +59,7 @@ func (h *TodoHandler) ListTodo(w http.ResponseWriter, r *http.Request) {
 	h.respondJSON(w, http.StatusOK, output)
 }
 
-func (h *TodoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
+func (h *todoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
 
@@ -85,7 +87,7 @@ func (h *TodoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 	h.respondJSON(w, http.StatusOK, output)
 }
 
-func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
+func (h *todoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var input input.CreateTodoInput
@@ -108,7 +110,7 @@ func (h *TodoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	h.respondJSON(w, http.StatusCreated, output)
 }
 
-func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
+func (h *todoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
 
@@ -139,7 +141,7 @@ func (h *TodoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	h.respondJSON(w, http.StatusOK, output)
 }
 
-func (h *TodoHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
+func (h *todoHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
 

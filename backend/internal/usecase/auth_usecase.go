@@ -45,7 +45,7 @@ func (u *authUseCase) Login(ctx context.Context, input *input.LoginInput) (*outp
 	}
 
 	// create jwt token
-	tokenString, err := auth.CreateToken(user.Email)
+	tokenString, err := auth.GenerateToken(user.Email)
 	if err != nil {
 		return nil, apperrors.NewInternalError("failed to create token", err)
 	}
@@ -80,7 +80,7 @@ func (u *authUseCase) RegisterUserInput(ctx context.Context, input *input.Regist
 	}
 
 	// create jwt token
-	tokenString, err := auth.CreateToken(user.Email)
+	tokenString, err := auth.GenerateToken(user.Email)
 	if err != nil {
 		return nil, apperrors.NewInternalError("failed to create token", err)
 	}

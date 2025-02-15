@@ -14,7 +14,7 @@ import (
 
 
 type AuthHandler interface {
-	RegisterHandlers(r *mux.Router)
+	RegisterAuthHandlers(r *mux.Router)
 	Login(w http.ResponseWriter, r *http.Request)
 	Signup(w http.ResponseWriter, r *http.Request)
 }
@@ -28,7 +28,7 @@ func NewAuthHandler(authUseCase usecase.AuthUseCase) AuthHandler {
 	return &authHandler{authUseCase: authUseCase}
 }
 
-func (h *authHandler) RegisterHandlers(r *mux.Router) {
+func (h *authHandler) RegisterAuthHandlers(r *mux.Router) {
 	authRouter := r.PathPrefix(constants.AuthPath).Subrouter()
 
 	authRouter.HandleFunc("/login", h.Login).Methods(http.MethodPost)

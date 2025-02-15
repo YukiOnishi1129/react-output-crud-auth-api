@@ -37,8 +37,8 @@ func main() {
 
 	r.Use(corsOptions)
 
-	authHandler.RegisterHandlers(r)
-	todoHandler.RegisterHandlers(r)
+	authHandler.RegisterAuthHandlers(r)
+	todoHandler.RegisterTodoHandlers(r)
 
 
 	log.Printf("Server started at http://localhost:%s", os.Getenv("BACKEND_CONTAINER_POST"))
