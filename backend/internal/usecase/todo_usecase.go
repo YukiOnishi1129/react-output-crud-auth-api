@@ -1,0 +1,116 @@
+package usecase
+
+import (
+	"context"
+
+	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/infrastructure/persistence/dto"
+	apperrors "github.com/YukiOnishi1129/react-output-crud-api/backend/internal/pkg/errors"
+	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/repository"
+	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/usecase/input"
+	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/usecase/output"
+)
+
+type TodoUseCase interface {
+	ListTodo(ctx context.Context) (*output.TodoListOutput, error)
+	GetTodo(ctx context.Context, input *input.GetTodoInput) (*output.TodoOutput, error)
+	CreateTodo(ctx context.Context, input *input.CreateTodoInput) (*output.TodoOutput, error)
+	UpdateTodo(ctx context.Context, input *input.UpdateTodoInput) (*output.TodoOutput, error)
+	DeleteTodo(ctx context.Context, input *input.DeleteTodoInput) error
+}
+
+type todoUseCase struct {
+	todoRepo repository.TodoRepository
+}
+
+func NewTodoUseCase(todoRepo repository.TodoRepository) TodoUseCase {
+	return &todoUseCase{todoRepo: todoRepo}
+}
+
+func (u *todoUseCase)ListTodo(ctx context.Context) (*output.TodoListOutput, error) {
+	todos, err := u.todoRepo.FindAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return output.NewTodoListOutput(todos), nil
+}
+
+func (u *todoUseCase)GetTodo(ctx context.Context, input *input.GetTodoInput) (*output.TodoOutput, error) {
+	if err := input.Validate(); err != nil {
+		return nil, apperrors.NewValidationError("invalid input parameters", err)
+	}
+	inputDTO := &dto.FindByIDInput{
+		ID: input.ID,
+	}
+	todo, err := u.todoRepo.FindByID(ctx, inputDTO)
+	if err != nil {
+		return nil, err
+	}
+
+	return output.NewTodoOutput(todo), nil
+}
+
+func (u *todoUseCase)CreateTodo(ctx context.Context, input *input.CreateTodoInput) (*output.TodoOutput, error) {
+	if err := input.Validate(); err != nil {
+		return nil, apperrors.NewValidationError("invalid input parameters", err)
+	}
+	inputDTO := &dto.CreateTodoInput{
+		Title:   input.Title,
+		Content: input.Content,
+	}
+	todo, err := u.todoRepo.Create(ctx, inputDTO)
+	if err != nil {
+		return nil, err
+	}
+
+	return output.NewTodoOutput(todo), nil
+}
+
+func (u *todoUseCase)UpdateTodo(ctx context.Context, input *input.UpdateTodoInput) (*output.TodoOutput, error) {
+	if err := input.Validate(); err != nil {
+		return nil, apperrors.NewValidationError("invalid input parameters", err)
+	}
+	inputFindDTO := &dto.FindByIDInput{
+		ID:      input.ID,
+	}
+	existing, err := u.todoRepo.FindByID(ctx, inputFindDTO)
+	if err != nil {
+		return nil, err
+	}
+	if existing == nil {
+		return nil, apperrors.NewNotFoundError("todo not found", nil)
+	}
+
+	inputUpdateDTO := &dto.UpdateTodoInput{
+		ID:      input.ID,
+		Title:   input.Title,
+		Content: input.Content,
+	}
+
+	updated, err := u.todoRepo.Update(ctx, inputUpdateDTO); 
+	if err != nil {
+		return nil, err
+	}
+
+	return output.NewTodoOutput(updated), nil
+}
+
+func (u *todoUseCase)DeleteTodo(ctx context.Context, input *input.DeleteTodoInput) error {
+	if err := input.Validate(); err != nil {
+		return apperrors.NewValidationError("invalid input parameters", err)
+	}
+	inputFindDTO := &dto.FindByIDInput{
+		ID:      input.ID,
+	}
+	existing, err := u.todoRepo.FindByID(ctx, inputFindDTO)
+	if err != nil {
+		return err
+	}
+	if existing == nil {
+		return apperrors.NewNotFoundError("todo not found", nil)
+	}
+	inputDeleteDTO := &dto.DeleteTodoInput{
+		ID:      input.ID,
+	}
+	return u.todoRepo.Delete(ctx, inputDeleteDTO)
+}
