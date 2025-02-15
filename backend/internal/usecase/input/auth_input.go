@@ -17,13 +17,13 @@ func (i *LoginInput) Validate() error {
 	return nil
 }
 
-type RegisterInput struct {
+type RegisterUserInput struct {
 	Name     string `json:"name" validate:"required,min=1,max=100"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=8,max=100"`
 }
 
-func (i *RegisterInput) Validate() error {
+func (i *RegisterUserInput) Validate() error {
 	if i.Name == "" {
 		return errors.New("name is required")
 	}

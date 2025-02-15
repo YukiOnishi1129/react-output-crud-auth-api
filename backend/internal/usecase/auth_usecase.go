@@ -15,7 +15,7 @@ import (
 
 type AuthUseCase interface {
 	Login(ctx context.Context, input *input.LoginInput) (*output.AuthOutput, error)
-	Register(ctx context.Context, input *input.RegisterInput) (*output.AuthOutput, error)
+	RegisterUserInput(ctx context.Context, input *input.RegisterUserInput) (*output.AuthOutput, error)
 }
 
 type authUseCase struct {
@@ -58,7 +58,7 @@ func (u *authUseCase) Login(ctx context.Context, input *input.LoginInput) (*outp
 }
 
 
-func (u *authUseCase) Register(ctx context.Context, input *input.RegisterInput) (*output.AuthOutput, error) {
+func (u *authUseCase) RegisterUserInput(ctx context.Context, input *input.RegisterUserInput) (*output.AuthOutput, error) {
 	if err := input.Validate(); err != nil {
 		return nil, apperrors.NewValidationError("invalid input parameters", err)
 	}

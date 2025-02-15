@@ -22,19 +22,22 @@ func main() {
 		return
 	}
 	r := mux.NewRouter()
+	userRepository := persistence_gorm.NewUserRepository(db)
 	todoRepository := persistence_gorm.NewTodoRepository(db)
+	authUsecase := usecase.NewAuthUseCase(userRepository)
 	todoUsecase := usecase.NewTodoUseCase(todoRepository)
+	authHandler := handler.NewAuthHandler(authUsecase)
 	todoHandler := handler.NewTodoHandler(todoUsecase)
 
 	corsOptions := handlers.CORS(
-		handlers.AllowedOrigins([]string{os.Getenv("FRONTEND_URL")}), // 環境変数からオリジンを取得
-		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}), // 許可するHTTPメソッド
-		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}), // 許可するヘッダー
+		handlers.AllowedOrigins([]string{os.Getenv("FRONTEND_URL")}), 
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}), 
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}), 
 	)
 
-	// CORSミドルウェアをルーターに適用
 	r.Use(corsOptions)
 
+	authHandler.RegisterHandlers(r)
 	todoHandler.RegisterHandlers(r)
 
 

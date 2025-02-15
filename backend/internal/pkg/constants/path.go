@@ -6,5 +6,6 @@ const (
 )
 
 const (
+	AuthPath = APIBasePath + "/auth"
 	TodosPath = APIBasePath + "/todos"
 )

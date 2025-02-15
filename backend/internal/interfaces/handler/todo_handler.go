@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/constants"
 	apperrors "github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/errors"
 	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/usecase"
 	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/usecase/input"
@@ -29,6 +30,19 @@ type TodoHandler struct {
 
 func NewTodoHandler(todoUseCase usecase.TodoUseCase) TodoHandlerInterface {
 	return &TodoHandler{todoUseCase: todoUseCase}
+}
+
+
+func (h *TodoHandler) RegisterHandlers(r *mux.Router) {
+	todoRouter := r.PathPrefix(constants.TodosPath).Subrouter()
+
+	todoRouter.HandleFunc("", h.ListTodo).Methods("GET")
+	todoRouter.HandleFunc("/{id}", h.GetTodo).Methods("GET")
+	todoRouter.HandleFunc("", h.CreateTodo).Methods("POST")
+	todoRouter.HandleFunc("", optionsPostHandler).Methods("OPTIONS")
+	todoRouter.HandleFunc("/{id}", h.UpdateTodo).Methods("PUT")
+	todoRouter.HandleFunc("/{id}", h.DeleteTodo).Methods("DELETE")
+	todoRouter.HandleFunc("/{id}", optionsDeleteHandler).Methods("OPTIONS")
 }
 
 func (h *TodoHandler) ListTodo(w http.ResponseWriter, r *http.Request) {
@@ -151,3 +165,6 @@ func (h *TodoHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 
 	h.respondJSON(w, http.StatusNoContent, nil)
 }
+
+
+
