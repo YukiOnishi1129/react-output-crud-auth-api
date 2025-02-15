@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"os"
 
-	persistence_gorm "github.com/YukiOnishi1129/react-output-crud-api/backend/internal/infrastructure/persistence/gorm"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/interfaces/handler"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/pkg/database"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/usecase"
+	persistence_gorm "github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/infrastructure/persistence/gorm"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/interfaces/handler"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/database"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/usecase"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )

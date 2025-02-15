@@ -7,9 +7,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
-	apperrors "github.com/YukiOnishi1129/react-output-crud-api/backend/internal/pkg/errors"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/usecase"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/usecase/input"
+	apperrors "github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/errors"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/usecase"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/usecase/input"
 )
 
 type TodoHandlerInterface interface {

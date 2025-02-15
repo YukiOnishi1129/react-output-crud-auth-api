@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/pkg/constants"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/constants"
 	"github.com/gorilla/mux"
 )
 

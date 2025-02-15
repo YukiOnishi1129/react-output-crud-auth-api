@@ -3,11 +3,11 @@ package usecase
 import (
 	"context"
 
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/infrastructure/persistence/dto"
-	apperrors "github.com/YukiOnishi1129/react-output-crud-api/backend/internal/pkg/errors"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/repository"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/usecase/input"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/usecase/output"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/infrastructure/persistence/dto"
+	apperrors "github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/errors"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/repository"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/usecase/input"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/usecase/output"
 )
 
 type TodoUseCase interface {

@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/infrastructure/persistence/dto"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/infrastructure/persistence/dto"
 )
 
 type TodoRepository interface {

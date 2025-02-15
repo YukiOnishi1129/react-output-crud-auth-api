@@ -3,10 +3,10 @@ package persistence_gorm
 import (
 	"context"
 
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/domain"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/infrastructure/persistence/dto"
-	apperrors "github.com/YukiOnishi1129/react-output-crud-api/backend/internal/pkg/errors"
-	"github.com/YukiOnishi1129/react-output-crud-api/backend/internal/repository"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/domain"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/infrastructure/persistence/dto"
+	apperrors "github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/errors"
+	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/repository"
 	"gorm.io/gorm"
 )
 
