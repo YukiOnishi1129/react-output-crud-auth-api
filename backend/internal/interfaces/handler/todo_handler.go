@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 
-	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/interfaces/middleware"
 	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/constants"
 	apperrors "github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/pkg/errors"
 	"github.com/YukiOnishi1129/react-output-crud-auth-api/backend/internal/usecase"
@@ -35,7 +34,7 @@ func NewTodoHandler(todoUseCase usecase.TodoUseCase, userUseCase usecase.UserUse
 
 func (h *todoHandler) RegisterTodoHandlers(r *mux.Router) {
 	todoRouter := r.PathPrefix(constants.TodosPath).Subrouter()
-	todoRouter.Use(middleware.AuthMiddleware)
+	todoRouter.Use(h.authMiddleware)
 
 	todoRouter.HandleFunc("", h.ListTodo).Methods("GET")
 	todoRouter.HandleFunc("/{id}", h.GetTodo).Methods("GET")
@@ -48,7 +47,7 @@ func (h *todoHandler) RegisterTodoHandlers(r *mux.Router) {
 
 func (h *todoHandler) ListTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	email := middleware.GetUserEmail(r)
+	email := h.getUserEmail(r)
 	user, err := h.userUseCase.GetUserByEmail(ctx, &input.GetUserByEmailInput{Email: email})
 	if err != nil {
 		h.respondError(w, err)
@@ -67,6 +66,12 @@ func (h *todoHandler) ListTodo(w http.ResponseWriter, r *http.Request) {
 func (h *todoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
+	email := h.getUserEmail(r)
+	user, err := h.userUseCase.GetUserByEmail(ctx, &input.GetUserByEmailInput{Email: email})
+	if err != nil {
+		h.respondError(w, err)
+		return
+	}
 
 	todoID, err := uuid.Parse(vars["id"])
 	if err != nil {
@@ -76,6 +81,7 @@ func (h *todoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 
 	input := &input.GetTodoInput{
 		ID:     todoID,
+		UserID: user.ID,
 	}
 
 	if err := input.Validate(); err != nil {
@@ -95,11 +101,19 @@ func (h *todoHandler) GetTodo(w http.ResponseWriter, r *http.Request) {
 func (h *todoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
+	email := h.getUserEmail(r)
+	user, err := h.userUseCase.GetUserByEmail(ctx, &input.GetUserByEmailInput{Email: email})
+	if err != nil {
+		h.respondError(w, err)
+		return
+	}
+
 	var input input.CreateTodoInput
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		h.respondError(w, apperrors.NewValidationError("invalid request body", err))
 		return
 	}
+	input.UserID = user.ID
 
 	if err := input.Validate(); err != nil {
 		h.respondError(w, apperrors.NewValidationError("validation failed", err))
@@ -118,6 +132,12 @@ func (h *todoHandler) CreateTodo(w http.ResponseWriter, r *http.Request) {
 func (h *todoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
+	email := h.getUserEmail(r)
+	user, err := h.userUseCase.GetUserByEmail(ctx, &input.GetUserByEmailInput{Email: email})
+	if err != nil {
+		h.respondError(w, err)
+		return
+	}
 
 	todoID, err := uuid.Parse(vars["id"])
 	if err != nil {
@@ -131,6 +151,7 @@ func (h *todoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	input.ID = todoID
+	input.UserID = user.ID
 
 	if err := input.Validate(); err != nil {
 		h.respondError(w, apperrors.NewValidationError("validation failed", err))
@@ -149,6 +170,12 @@ func (h *todoHandler) UpdateTodo(w http.ResponseWriter, r *http.Request) {
 func (h *todoHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	vars := mux.Vars(r)
+	email := h.getUserEmail(r)
+	user, err := h.userUseCase.GetUserByEmail(ctx, &input.GetUserByEmailInput{Email: email})
+	if err != nil {
+		h.respondError(w, err)
+		return
+	}
 
 	todoID, err := uuid.Parse(vars["id"])
 	if err != nil {
@@ -158,6 +185,7 @@ func (h *todoHandler) DeleteTodo(w http.ResponseWriter, r *http.Request) {
 
 	input := &input.DeleteTodoInput{
 		ID:     todoID,
+		UserID: user.ID,
 	}
 
 	if err := input.Validate(); err != nil {

@@ -8,12 +8,12 @@ import (
 )
 
 type FindAllInput struct {
-	UserID string  `json:"user_id" validate:"required"`
+	UserID  uuid.UUID  `json:"user_id" validate:"required"`
 }
 
 type FindByIDInput struct {
 	ID     uuid.UUID  `json:"id" validate:"required"`
-	UserID uuid.UUID  `json:"user_id" validate:"required"`
+	UserID  uuid.UUID  `json:"user_id" validate:"required"`
 }
 
 type CreateTodoInput struct {

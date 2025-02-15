@@ -20,7 +20,7 @@ func NewTodoRepository(db *gorm.DB) repository.TodoRepository {
 
 func (r *todoRepository) FindAll(ctx context.Context, input *dto.FindAllInput) (*dto.TodoListOutput, error) {
 	var todos []*domain.Todo
-	if err := r.db.Where("user_id = ?", input.UserID).Find(&todos).Error; err != nil {
+	if err := r.db.Where("user_id = ?", input.UserID.String()).Find(&todos).Error; err != nil {
 		return &dto.TodoListOutput{}, err
 	}
 	return dto.ConvertTodoListOutput(todos, int64(len(todos))), nil
@@ -28,7 +28,7 @@ func (r *todoRepository) FindAll(ctx context.Context, input *dto.FindAllInput) (
 
 func (r *todoRepository) FindByID(ctx context.Context, input *dto.FindByIDInput) (*dto.TodoOutput, error){
 	var todo domain.Todo
-	if err := r.db.First(&todo, "id = ?", input.ID).Error; err != nil {
+	if err := r.db.Where("user_id = ?", input.UserID.String()).First(&todo, "id = ?", input.ID).Error; err != nil {
 		return nil, HandleDBError(err, "todo")
 	}
 	
@@ -37,6 +37,7 @@ func (r *todoRepository) FindByID(ctx context.Context, input *dto.FindByIDInput)
 
 func (r *todoRepository) Create(ctx context.Context, input *dto.CreateTodoInput) (*dto.TodoOutput, error) {
 	var todo domain.Todo
+	todo.UserID = input.UserID
 	todo.Title = input.Title
 	todo.Content = input.Content
 	if err := r.db.Create(&todo).Error; err != nil {
@@ -48,6 +49,7 @@ func (r *todoRepository) Create(ctx context.Context, input *dto.CreateTodoInput)
 func (r *todoRepository) Update(ctx context.Context, input *dto.UpdateTodoInput) (*dto.TodoOutput, error){
 	var todo domain.Todo
 	todo.ID = input.ID
+	todo.UserID = input.UserID
 	todo.Title = input.Title
 	todo.Content = input.Content
 	if err := r.db.Save(&todo).Error; err != nil {
