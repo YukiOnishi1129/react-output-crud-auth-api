@@ -4,21 +4,22 @@ import { AuthType } from "../types/User";
 import { IErrorResponse, ResponseType } from "../types/ApiResponse";
 
 export const login = async (email: string, password: string) => {
-  const res: ResponseType<AuthType> = {
-    code: 500,
-    message: "",
-  };
   try {
     const response = await globalAxios.post<AuthType>("/auth/login", {
       email,
       password,
     });
-    res.code = response.status;
-    res.data = response.data;
+    const res: ResponseType<AuthType> = {
+      code: response.status,
+      data: response.data,
+    };
 
     return res;
   } catch (error) {
-    res.message = error as string;
+    const res: ResponseType = {
+      code: 500,
+      message: error as string,
+    };
     if (isAxiosError(error)) {
       const axiosError = error as IErrorResponse;
       res.code = axiosError.response.status;
@@ -33,22 +34,22 @@ export const register = async (
   email: string,
   password: string
 ) => {
-  const res: ResponseType<AuthType> = {
-    code: 500,
-    message: "",
-  };
-
   try {
     const response = await globalAxios.post<AuthType>("/auth/register", {
       name,
       email,
       password,
     });
-    res.code = response.status;
-    res.data = response.data;
+    const res: ResponseType<AuthType> = {
+      code: response.status,
+      data: response.data,
+    };
     return res;
   } catch (error) {
-    res.message = error as string;
+    const res: ResponseType = {
+      code: 500,
+      message: error as string,
+    };
     if (isAxiosError(error)) {
       const axiosError = error as IErrorResponse;
       res.code = axiosError.response.status;
@@ -59,17 +60,18 @@ export const register = async (
 };
 
 export const checkAuthentication = async () => {
-  const res: ResponseType<AuthType> = {
-    code: 500,
-    message: "",
-  };
   try {
     const response = await globalAxios.post<AuthType>("/auth/authentication");
-    res.code = response.status;
-    res.data = response.data;
+    const res: ResponseType<AuthType> = {
+      code: response.status,
+      data: response.data,
+    };
     return res;
   } catch (error) {
-    res.message = error as string;
+    const res: ResponseType = {
+      code: 500,
+      message: error as string,
+    };
     if (isAxiosError(error)) {
       const axiosError = error as IErrorResponse;
       res.code = axiosError.response.status;

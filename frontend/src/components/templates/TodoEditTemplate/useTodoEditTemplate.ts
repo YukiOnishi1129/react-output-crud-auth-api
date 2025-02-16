@@ -31,9 +31,9 @@ export const useTodoEditTemplate = () => {
   const fetchTodo = useCallback(async () => {
     if (!id) return;
     const response = await getTodo({ id });
-    if (!response) return;
-    setValue("title", response.title);
-    setValue("content", response.content);
+    if (!response.data) return;
+    setValue("title", response.data.title);
+    setValue("content", response.data.content);
   }, [id, setValue]);
 
   const handleEditSubmit = handleSubmit(
