@@ -36,13 +36,13 @@ func (h *todoHandler) RegisterTodoHandlers(r *mux.Router) {
 	todoRouter := r.PathPrefix(constants.TodosPath).Subrouter()
 	todoRouter.Use(h.authMiddleware)
 
-	todoRouter.HandleFunc("", h.ListTodo).Methods("GET")
-	todoRouter.HandleFunc("/{id}", h.GetTodo).Methods("GET")
-	todoRouter.HandleFunc("", h.CreateTodo).Methods("POST")
-	todoRouter.HandleFunc("", optionsPostHandler).Methods("OPTIONS")
-	todoRouter.HandleFunc("/{id}", h.UpdateTodo).Methods("PUT")
-	todoRouter.HandleFunc("/{id}", h.DeleteTodo).Methods("DELETE")
-	todoRouter.HandleFunc("/{id}", optionsDeleteHandler).Methods("OPTIONS")
+	todoRouter.HandleFunc("", corsMiddleware(h.ListTodo)).Methods(http.MethodGet, http.MethodOptions)
+	todoRouter.HandleFunc("/{id}", corsMiddleware(h.GetTodo)).Methods(http.MethodGet, http.MethodOptions)
+	todoRouter.HandleFunc("", corsMiddleware(h.CreateTodo)).Methods(http.MethodPost, http.MethodOptions)
+	// todoRouter.HandleFunc("", optionsPostHandler).Methods("OPTIONS")
+	todoRouter.HandleFunc("/{id}", corsMiddleware(h.UpdateTodo)).Methods(http.MethodPut, http.MethodOptions)
+	todoRouter.HandleFunc("/{id}", corsMiddleware(h.DeleteTodo)).Methods(http.MethodDelete, http.MethodOptions)
+	// todoRouter.HandleFunc("/{id}", optionsDeleteHandler).Methods("OPTIONS")
 }
 
 func (h *todoHandler) ListTodo(w http.ResponseWriter, r *http.Request) {

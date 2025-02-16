@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"os"
 
@@ -30,28 +29,27 @@ func NewAuthHandler(authUseCase usecase.AuthUseCase) AuthHandler {
 	return &authHandler{authUseCase: authUseCase}
 }
 
-func authCorsMiddleware(next http.Handler) http.Handler {
+type AuthHandle func(w http.ResponseWriter, r *http.Request)
+
+func authCorsMiddleware(handle AuthHandle) http.HandlerFunc{
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", os.Getenv("FRONTEND_URL")) 
 		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS") 
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type") 
+		w.Header().Set("Access-Control-Allow-Headers", "*") 
 
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
-		next.ServeHTTP(w, r)
+		handle(w, r)
 	})
 }
 
 func (h *authHandler) RegisterAuthHandlers(r *mux.Router) {
 	authRouter := r.PathPrefix(constants.AuthPath).Subrouter()
-	authRouter.Use(authCorsMiddleware)
 
-	authRouter.HandleFunc("/login", h.Login).Methods(http.MethodPost)
-	// authRouter.HandleFunc("/login", optionsLoginHandler).Methods(http.MethodPost)
-	authRouter.HandleFunc("/signup", h.Signup).Methods(http.MethodPost)
-	// authRouter.HandleFunc("/signup", optionsPostHandler).Methods(http.MethodPost)
+	authRouter.HandleFunc("/login", authCorsMiddleware(h.Login)).Methods(http.MethodPost,http.MethodOptions)
+	authRouter.HandleFunc("/signup", authCorsMiddleware(h.Signup)).Methods(http.MethodPost,http.MethodOptions)
 }
 
 func (h *authHandler) Login(w http.ResponseWriter, r *http.Request) {
@@ -92,11 +90,11 @@ func (h *authHandler) Signup(w http.ResponseWriter, r *http.Request) {
 }
 
 
-func optionsLoginHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println("optionsLoginHandler")
-	log.Printf("Access-Control-Allow-Origin: %v", os.Getenv("FRONTEND_URL"))
-	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("FRONTEND_URL"))
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-	w.WriteHeader(http.StatusOK)
-}
+// func optionsLoginHandler(w http.ResponseWriter, r *http.Request) {
+// 	log.Println("optionsLoginHandler")
+// 	log.Printf("Access-Control-Allow-Origin: %v", os.Getenv("FRONTEND_URL"))
+// 	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("FRONTEND_URL"))
+// 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+// 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+// 	w.WriteHeader(http.StatusOK)
+// }
