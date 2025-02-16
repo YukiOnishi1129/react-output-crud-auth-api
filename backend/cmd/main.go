@@ -36,7 +36,7 @@ func main() {
 	todoHandler.RegisterTodoHandlers(r)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173"}, // フロントエンドのオリジン
+		AllowedOrigins:   []string{os.Getenv("FRONTEND_URL")}, // フロントエンドのオリジン
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
