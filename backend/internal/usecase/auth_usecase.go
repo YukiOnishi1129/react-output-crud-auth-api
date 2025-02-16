@@ -15,7 +15,8 @@ import (
 
 type AuthUseCase interface {
 	Login(ctx context.Context, input *input.LoginInput) (*output.AuthOutput, error)
-	RegisterUserInput(ctx context.Context, input *input.RegisterUserInput) (*output.AuthOutput, error)
+	RegisterUser(ctx context.Context, input *input.RegisterUserInput) (*output.AuthOutput, error)
+	CheckAuthentication(ctx context.Context, input *input.CheckAuthenticationInput) (*output.AuthOutput, error)
 }
 
 type authUseCase struct {
@@ -58,7 +59,7 @@ func (u *authUseCase) Login(ctx context.Context, input *input.LoginInput) (*outp
 }
 
 
-func (u *authUseCase) RegisterUserInput(ctx context.Context, input *input.RegisterUserInput) (*output.AuthOutput, error) {
+func (u *authUseCase) RegisterUser(ctx context.Context, input *input.RegisterUserInput) (*output.AuthOutput, error) {
 	if err := input.Validate(); err != nil {
 		return nil, apperrors.NewValidationError("invalid input parameters", err)
 	}
@@ -74,6 +75,32 @@ func (u *authUseCase) RegisterUserInput(ctx context.Context, input *input.Regist
 		Name:     input.Name,
 		Email:    input.Email,
 		Password: hashedPassword,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// create jwt token
+	tokenString, err := auth.GenerateToken(user.Email)
+	if err != nil {
+		return nil, apperrors.NewInternalError("failed to create token", err)
+	}
+
+	userOutput := output.ConvertUserOutput(user)
+	return &output.AuthOutput{
+		Token: tokenString,
+		User:  *userOutput,
+	}, nil
+}
+
+func (u *authUseCase) CheckAuthentication(ctx context.Context, input *input.CheckAuthenticationInput) (*output.AuthOutput, error) {
+	if err := input.Validate(); err != nil {
+		return nil, apperrors.NewValidationError("invalid input parameters", err)
+	}
+
+	// find user by email
+	user, err := u.userRepo.FindByEmail(ctx, &dto.FindUserByEmailInput{
+		Email: input.Email,
 	})
 	if err != nil {
 		return nil, err

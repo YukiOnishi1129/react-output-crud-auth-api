@@ -29,6 +29,12 @@
 
 ## 仕様
 
+- 認証機能
+
+  - ログイン
+  - 会員登録
+  - ログアウト
+
 - Todo リスト
   - 一覧表示
   - 検索処理
@@ -49,6 +55,18 @@ https://matsuand.github.io/docs.docker.jp.onthefly/desktop/mac/install/
 
 ```
 touch .env
+```
+
+- jwt secret key を作成して環境変数に適用
+
+```
+# jwt secret keyの生成コマンド
+openssl rand -base64 32
+
+
+.envのJWT_SECRETに記載
+JWT_SECRET=xxxx
+
 ```
 
 - docker build を実行

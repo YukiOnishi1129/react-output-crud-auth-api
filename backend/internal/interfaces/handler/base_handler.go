@@ -92,7 +92,7 @@ func  (h *BaseHandler) authMiddleware(next http.Handler)http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
-			h.respondError(w, apperrors.NewNotFoundError("authorization header is required", nil))
+			h.respondError(w, apperrors.NewUnauthorizedError("authorization header is required", nil))
 			return
 		}
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
@@ -123,19 +123,4 @@ func  (h *BaseHandler) getUserEmail(r *http.Request) string {
 		return ""
 	}
 	return email
-}
-
-
-func optionsDeleteHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("FRONTEND_URL"))
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-	w.WriteHeader(http.StatusNoContent)
-}
-
-func optionsPostHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("FRONTEND_URL"))
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-	w.WriteHeader(http.StatusCreated)
 }

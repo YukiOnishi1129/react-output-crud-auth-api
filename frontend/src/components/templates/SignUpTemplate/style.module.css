@@ -17,7 +17,26 @@
   font-size: 48px;
 }
 
-.header {
-  width: 100%;
-  /* padding: 40px auto; */
+.form {
+  width: 80%;
+  margin: 40px auto;
+}
+
+.area {
+  margin-top: 40px;
+}
+
+.link {
+  margin-top: 20px;
+}
+
+.link > a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.link > a:hover {
+  color: #d87e00;
 }

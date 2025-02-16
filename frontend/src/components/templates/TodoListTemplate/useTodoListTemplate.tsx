@@ -34,9 +34,8 @@ export const useTodoListTemplate = () => {
 
   const fetchTodoList = useCallback(async () => {
     const response = await getTodos();
-    if (!response) return;
-
-    setTodoList(response.todos);
+    if (!response?.data) return;
+    setTodoList(response.data.todos);
   }, []);
 
   const handleDeleteTodo = useCallback((id: string, title: string) => {
