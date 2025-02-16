@@ -2,7 +2,10 @@ import axios, { AxiosError } from "axios";
 
 const BASE_API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-const token = localStorage.getItem("authentication");
+const getToken = () =>
+  localStorage.getItem("authentication")
+    ? localStorage.getItem("authentication")
+    : null;
 
 const apiClient = axios.create({
   baseURL: BASE_API_URL,
@@ -13,6 +16,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
+    const token = getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -22,6 +26,11 @@ apiClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+export const setAxiosAuthentication = (token: string) => {
+  localStorage.setItem("authentication", token);
+  apiClient.defaults.headers.Authorization = `Bearer ${token}`;
+};
 
 export default apiClient;
 

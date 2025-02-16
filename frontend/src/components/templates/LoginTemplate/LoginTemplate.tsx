@@ -4,6 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { setAxiosAuthentication } from "../../../apis/globalAxios";
 import { login } from "../../../apis/auth";
 
 import {
@@ -39,7 +40,7 @@ export const LoginTemplate: FC = () => {
         const { email, password } = values;
         const res = await login(email, password);
         if (res) {
-          localStorage.setItem("authentication", res.token);
+          setAxiosAuthentication(res.token);
           navigate(NAVIGATION_PATH.TOP);
         }
       },
