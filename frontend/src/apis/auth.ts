@@ -35,7 +35,7 @@ export const register = async (
   password: string
 ) => {
   try {
-    const response = await globalAxios.post<AuthType>("/auth/register", {
+    const response = await globalAxios.post<AuthType>("/auth/signup", {
       name,
       email,
       password,
