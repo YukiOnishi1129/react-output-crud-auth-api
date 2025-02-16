@@ -1,6 +1,13 @@
 .container {
-  width: 50%;
-  margin: 80px auto;
+  width: 90%;
+  margin: 0px auto;
+}
+
+@media screen and (min-width: 960px) {
+  .container {
+    width: 50%;
+    margin: 0px auto;
+  }
 }
 
 .title {
@@ -10,7 +17,7 @@
   font-size: 48px;
 }
 
-.common {
-  width: 80%;
-  margin: 40px auto;
+.header {
+  width: 100%;
+  /* padding: 40px auto; */
 }
