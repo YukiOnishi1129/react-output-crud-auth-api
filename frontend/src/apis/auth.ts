@@ -33,3 +33,12 @@ export const register = async (
     console.error(error);
   }
 };
+
+export const checkAuthentication = async () => {
+  try {
+    const response = await globalAxios.post<AuthType>("/auth/authentication");
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};

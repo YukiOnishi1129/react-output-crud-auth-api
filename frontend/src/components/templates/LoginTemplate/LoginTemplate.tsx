@@ -1,16 +1,14 @@
 import { FC, useCallback } from "react";
-import { NavLink, useNavigate } from "react-router";
+import { NavLink } from "react-router";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { setAxiosAuthentication } from "../../../apis/globalAxios";
+import { useAuthContext } from "../../../hooks/useAuthContext";
+
 import { login } from "../../../apis/auth";
 
-import {
-  NAVIGATION_LIST,
-  NAVIGATION_PATH,
-} from "../../../constants/navigation";
+import { NAVIGATION_LIST } from "../../../constants/navigation";
 
 import { InputFormSection } from "../../molecules";
 import { CommonButton } from "../../atoms";
@@ -24,7 +22,7 @@ const schema = z.object({
 });
 
 export const LoginTemplate: FC = () => {
-  const navigate = useNavigate();
+  const { signIn } = useAuthContext();
 
   const {
     control,
@@ -40,11 +38,10 @@ export const LoginTemplate: FC = () => {
         const { email, password } = values;
         const res = await login(email, password);
         if (res) {
-          setAxiosAuthentication(res.token);
-          navigate(NAVIGATION_PATH.TOP);
+          signIn(res.user, res.token);
         }
       },
-      [navigate]
+      [signIn]
     )
   );
 

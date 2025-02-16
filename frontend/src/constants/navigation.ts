@@ -8,7 +8,7 @@ export const BASE_PATH = "";
  * 遷移先定義の際に使用
  */
 export const NAVIGATION_LIST = {
-  LOGIN: `${BASE_PATH}`,
+  LOGIN: `${BASE_PATH}/`,
   SIGNUP: `${BASE_PATH}/signup`,
   TOP: `${BASE_PATH}/todo`,
   DETAIL: `${BASE_PATH}/todo/detail/:id`,
@@ -21,7 +21,7 @@ export const NAVIGATION_LIST = {
  * 画面遷移時の使用
  */
 export const NAVIGATION_PATH = {
-  LOGIN: `${BASE_PATH}`,
+  LOGIN: `${BASE_PATH}/`,
   SIGNUP: `${BASE_PATH}/signup`,
   TOP: `${BASE_PATH}/todo`,
   DETAIL: `${BASE_PATH}/todo/detail/`,

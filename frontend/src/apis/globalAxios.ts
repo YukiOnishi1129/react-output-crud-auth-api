@@ -32,6 +32,11 @@ export const setAxiosAuthentication = (token: string) => {
   apiClient.defaults.headers.Authorization = `Bearer ${token}`;
 };
 
+export const removeAxiosAuthentication = () => {
+  localStorage.removeItem("authentication");
+  delete apiClient.defaults.headers.Authorization;
+};
+
 export default apiClient;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
