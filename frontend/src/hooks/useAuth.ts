@@ -41,8 +41,8 @@ export const useAuth = () => {
   const authRouting = useCallback(async () => {
     let auth = false;
     const response = await checkAuthentication();
-    if (response) {
-      setUser(response.user);
+    if (response?.code === 200 && response.data) {
+      setUser(response.data.user);
       setIsAuth(true);
       auth = true;
     }

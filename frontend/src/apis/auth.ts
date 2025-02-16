@@ -40,17 +40,43 @@ export const register = async (
       email,
       password,
     });
-    return response.data;
+    const res: ResponseType<AuthType> = {
+      code: response.status,
+      data: response.data,
+    };
+    return res;
   } catch (error) {
-    console.error(error);
+    const res: ResponseType = {
+      code: 500,
+      message: "",
+    };
+    if (isAxiosError(error)) {
+      const axiosError = error as IErrorResponse;
+      res.code = axiosError.response.status;
+      res.message = axiosError.response.data.message;
+    }
+    return res;
   }
 };
 
 export const checkAuthentication = async () => {
   try {
     const response = await globalAxios.post<AuthType>("/auth/authentication");
-    return response.data;
+    const res: ResponseType<AuthType> = {
+      code: response.status,
+      data: response.data,
+    };
+    return res;
   } catch (error) {
-    console.error(error);
+    const res: ResponseType = {
+      code: 500,
+      message: "",
+    };
+    if (isAxiosError(error)) {
+      const axiosError = error as IErrorResponse;
+      res.code = axiosError.response.status;
+      res.message = axiosError.response.data.message;
+    }
+    return res;
   }
 };
