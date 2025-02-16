@@ -28,6 +28,7 @@ export const LoginTemplate: FC = () => {
     control,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
@@ -35,13 +36,20 @@ export const LoginTemplate: FC = () => {
   const handleLoginSubmit = handleSubmit(
     useCallback(
       async (values: z.infer<typeof schema>) => {
+        if (values.password !== values.password_confirmation) {
+          setError("password", {
+            type: "manual",
+            message: "確認用パスワードと一致しません",
+          });
+          return;
+        }
         const { email, password } = values;
         const res = await login(email, password);
         if (res) {
           signIn(res.user, res.token);
         }
       },
-      [signIn]
+      [signIn, setError]
     )
   );
 
@@ -83,7 +91,7 @@ export const LoginTemplate: FC = () => {
             render={({ field }) => (
               <InputFormSection
                 type="password"
-                placeholder="password"
+                placeholder="confirm password"
                 errorMessage={errors.password_confirmation?.message}
                 {...field}
               />
