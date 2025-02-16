@@ -24,7 +24,7 @@ export const useTodoCreateTemplate = () => {
     formState: { errors },
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: { title: "", content: undefined },
+    defaultValues: { title: "", content: "" },
   });
 
   const handleAddSubmit = handleSubmit(

@@ -1,62 +1,18 @@
-import { FC, useCallback } from "react";
+import { FC } from "react";
 import { NavLink } from "react-router";
-import { Controller, useForm } from "react-hook-form";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { useAuthContext } from "../../../hooks/useAuthContext";
-
-import { login } from "../../../apis/auth";
+import { Controller } from "react-hook-form";
 
 import { NAVIGATION_LIST } from "../../../constants/navigation";
 
 import { InputFormSection } from "../../molecules";
 import { CommonButton } from "../../atoms";
 
+import { useLoginTemplate } from "./useLoginTemplate";
+
 import styles from "./style.module.css";
 
-const schema = z.object({
-  email: z.string().email("メールアドレスの形式で入力してください"),
-  password: z.string().min(8, "8文字以上で入力してください"),
-  password_confirmation: z.string().min(8, "8文字以上で入力してください"),
-});
-
 export const LoginTemplate: FC = () => {
-  const { signIn } = useAuthContext();
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
-  });
-
-  const handleLoginSubmit = handleSubmit(
-    useCallback(
-      async (values: z.infer<typeof schema>) => {
-        if (values.password !== values.password_confirmation) {
-          setError("password", {
-            type: "manual",
-            message: "確認用パスワードと一致しません",
-          });
-          return;
-        }
-        const { email, password } = values;
-        const res = await login(email, password);
-        if (res.code !== 200 || !res.data) {
-          setError("email", {
-            type: "manual",
-            message: res.message,
-          });
-          return;
-        }
-        signIn(res.data?.user, res.data?.token);
-      },
-      [signIn, setError]
-    )
-  );
+  const { control, errors, handleLoginSubmit } = useLoginTemplate();
 
   return (
     <div className={styles.container}>

@@ -26,6 +26,7 @@ export const useTodoEditTemplate = () => {
     setValue,
   } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
+    defaultValues: { title: "", content: "" },
   });
 
   const fetchTodo = useCallback(async () => {
