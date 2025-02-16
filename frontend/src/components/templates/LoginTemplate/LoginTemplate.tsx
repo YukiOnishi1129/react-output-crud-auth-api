@@ -45,9 +45,14 @@ export const LoginTemplate: FC = () => {
         }
         const { email, password } = values;
         const res = await login(email, password);
-        if (res) {
-          signIn(res.user, res.token);
+        if (res.code !== 200 || !res.data) {
+          setError("email", {
+            type: "manual",
+            message: res.message,
+          });
+          return;
         }
+        signIn(res.data?.user, res.data?.token);
       },
       [signIn, setError]
     )

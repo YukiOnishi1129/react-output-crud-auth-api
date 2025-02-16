@@ -1,6 +1,7 @@
 import globalAxios, { isAxiosError } from "./globalAxios";
 
 import { AuthType } from "../types/User";
+import { IErrorResponse, ResponseType } from "../types/ApiResponse";
 
 export const login = async (email: string, password: string) => {
   try {
@@ -8,12 +9,23 @@ export const login = async (email: string, password: string) => {
       email,
       password,
     });
-    return response.data;
+    const res: ResponseType<AuthType> = {
+      code: response.status,
+      data: response.data,
+    };
+
+    return res;
   } catch (error) {
+    const res: ResponseType = {
+      code: 500,
+      message: "",
+    };
     if (isAxiosError(error)) {
-      console.log(error);
+      const axiosError = error as IErrorResponse;
+      res.code = axiosError.response.status;
+      res.message = axiosError.response.data.message;
     }
-    console.log(error);
+    return res;
   }
 };
 
